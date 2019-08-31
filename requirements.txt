@@ -1,3 +1,2 @@
 websockets
 demjson
-async-sqlalchemy
