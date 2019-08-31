@@ -1,14 +1,13 @@
+import config
+import logging
+import datetime
+
 from sqlalchemy import create_engine
 import db.sessions as sessions
 from db.assets import Assets
 from db.assets_prices import AssetsPrices
 from lib.singleton import Singleton
 from sqlalchemy import desc
-
-import config
-import datetime
-
-import logging
 
 logger = logging.getLogger(__name__)
 

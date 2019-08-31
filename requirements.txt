@@ -1,2 +1,5 @@
 websockets
+websocket-client
 demjson
+sqlalchemy
+aiohttp

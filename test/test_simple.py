@@ -1,5 +1,3 @@
-import asyncio
-import websockets
 import json
 from websocket import create_connection
 import logging
