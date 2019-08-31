@@ -82,7 +82,7 @@ class WebsocketServer:
                 await connection.send(rsp.__str__())
 
             except websockets.ConnectionClosed:
-                logger.debug("Connection has been closed, removing it from subscriptions db")
+                logger.info("Connection has been closed, removing it from subscriptions db")
                 self.subscriptions_db.delete_subscription(connection)
 
     async def ticker_task(self):
@@ -111,6 +111,17 @@ class WebsocketServer:
             asyncio.create_task(self.ticker_task())
             await asyncio.sleep(1)
 
+    async def old_records_delete_ticker(self):
+        """
+        Every second ticker function. Run new coroutine every second.
+        :return: None
+        """
+        while True:
+            logger.info("Delete old records ticker")
+            threshold_ts = int(datetime.utcnow().timestamp()) - config.HISTORY_INTERVAL_SEC
+            DbHelpers().delete_old_records(threshold_ts)
+            await asyncio.sleep(config.DEELTE_OLD_RECORDS_INTERVAL_SEC)
+
     def run(self):
         """
         Web socket server and every second ticker run function.
@@ -128,5 +139,8 @@ class WebsocketServer:
             asyncio.ensure_future(start_server),
             asyncio.ensure_future(self.ticker())
         ]
+
+        if config.DEELTE_OLD_RECORDS:
+            tasks.append(asyncio.ensure_future(self.old_records_delete_ticker()))
 
         asyncio.get_event_loop().run_until_complete(asyncio.wait(tasks))

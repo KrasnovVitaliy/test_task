@@ -13,7 +13,7 @@ def subscribe_to_asset(asset_id, connection):
     :param connection: User WS connection
     :return: response message
     """
-    logger.debug("Create subscription to asset id: {}".format(asset_id))
+    logger.info("Create subscription to asset id: {}".format(asset_id))
     connection_db = SubscriptionsDB()
     connection_db.set_subscription(connection, asset_id)
     return {"points": DbHelpers().get_init_prices(asset_id)}

@@ -80,7 +80,7 @@ class DbHelpers(Singleton):
         logger.debug("Getting init prices for last {} seconds".format(config.HISTORY_INTERVAL_SEC))
         results = self._session.query(Assets, AssetsPrices) \
             .filter(AssetsPrices.rate == asset_id) \
-            .filter(AssetsPrices.timestamp > int(datetime.datetime.utcnow().timestamp()) - config.HISTORY_INTERVAL_SEC) \
+            .filter(AssetsPrices.timestamp >= int(datetime.datetime.utcnow().timestamp()) - config.HISTORY_INTERVAL_SEC) \
             .order_by(desc(AssetsPrices.timestamp)) \
             .all()
 
@@ -95,6 +95,12 @@ class DbHelpers(Singleton):
                 }
             )
         return rates_prices
+
+    def delete_old_records(self, threshold_timestamp):
+        logger.info("Delete old assets prices records with threshold timestamp: {}".format(threshold_timestamp))
+        self._session.query(AssetsPrices).filter(
+            AssetsPrices.timestamp < threshold_timestamp).delete()
+        self._session.commit()
 
 
 def prepare_db():
